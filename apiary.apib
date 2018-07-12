@@ -1,80 +1,128 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: http://lambda.dunamulab.com/api/v1
 
-# Lambda Token
+# Lambda Token Backend API
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+Lambda is APIs allowing services to perfom actions on chains
 
-## Questions Collection [/questions]
+## Authentication [/auth?{api_key,api_secret}]
 
-### List All Questions [GET]
+### Get Authentication Code [GET]
 
 + Response 200 (application/json)
 
-        [
+    + Body
+
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
+                "success": true,
+                "token": "Bearer TOKEN",
+                "published_at": "2018-07-05T08:40:51.620Z",
+                "refresh_token": "REFRESH_TOKEN"
             }
-        ]
 
-### Create a New Question [POST]
+## Users [/users]
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+### Create a New User [POST]
+
+You may create a user using this action. It takes a JSON
+object containing required data.
 
 + Request (application/json)
 
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
+    + Headers
+
+            Authorization: Bearer {auth_token}
+
+    + Body
+
+            {
+                "first_name": "Yoshi",
+                "last_name": "Munchakoopas",
+                "additional_data": {
+
+                }
+            }
 
 + Response 201 (application/json)
 
     + Headers
 
-            Location: /questions/2
+            Location: /users/1
 
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
+                "success": true
+            }
+
++ Response 400 (application/json)
+
+    + Headers
+
+            Location: /users/1
+
+    + Body
+
+            {
+                "success": false,
+                "error": {
+                  "description": "Required fields are missing",
+                  "additional_data": {
+
+                  }
+                }
+            }
+
++ Response 401 (application/json)
+
+    + Headers
+
+            Location: /users/1
+
+    + Body
+
+            {
+                "success": false,
+                "error": {
+                  "description": "Authorization required",
+                  "additional_data": {
+
+                  }
+                }
+            }
+
++ Response 403 (application/json)
+
+    + Headers
+
+            Location: /users/1
+
+    + Body
+
+            {
+                "success": false,
+                "error": {
+                  "description": "Permission denied",
+                  "additional_data": {
+
+                  }
+                }
+            }
+
++ Response 500 (application/json)
+
+    + Headers
+
+            Location: /users/1
+
+    + Body
+
+            {
+                "success": false,
+                "error": {
+                  "description": "Something went wrong - please try again later",
+                  "additional_data": {
+
+                  }
+                }
             }
